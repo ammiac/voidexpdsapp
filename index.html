@@ -6,7 +6,7 @@
     <title>VoidEXP Portal</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: sans-serif;
             background: radial-gradient(circle, #1a0b2e 0%, #0a0412 100%);
             color: #e2d5f3; margin: 0; padding: 20px;
             display: flex; justify-content: center; align-items: center;
@@ -19,9 +19,9 @@
             box-shadow: 0 0 25px rgba(138, 79, 255, 0.5); overflow: hidden;
         }
         .header { background: #251242; padding: 15px; text-align: center; border-bottom: 2px solid #8a4fff; }
-        .header h1 { margin: 0; font-size: 24px; color: #ba94ff; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 8px #8a4fff; }
+        .header h1 { margin: 0; font-size: 24px; color: #ba94ff; text-transform: uppercase; letter-spacing: 2px; }
         .nav-tabs { display: flex; background: #140a23; border-bottom: 1px solid #4a2b84; }
-        .tab-btn { flex: 1; padding: 12px; background: none; border: none; color: #a38ec2; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.3s; outline: none; }
+        .tab-btn { flex: 1; padding: 12px; background: none; border: none; color: #a38ec2; cursor: pointer; font-weight: bold; font-size: 14px; outline: none; }
         .tab-btn.active { color: #fff; background: #321957; border-bottom: 3px solid #ba94ff; }
         .content { padding: 20px; max-height: 60vh; overflow-y: auto; }
         .page { display: none; }
@@ -30,7 +30,7 @@
         label { display: block; margin-bottom: 5px; color: #ba94ff; font-size: 14px; }
         input, select, textarea { width: 100%; padding: 10px; background: #0d0617; border: 1px solid #4a2b84; border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 14px; }
         textarea { resize: vertical; min-height: 90px; }
-        .btn-submit { width: 100%; padding: 12px; background: #8a4fff; border: none; border-radius: 6px; color: #fff; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .btn-submit { width: 100%; padding: 12px; background: #8a4fff; border: none; border-radius: 6px; color: #fff; font-weight: bold; font-size: 16px; cursor: pointer; }
         .btn-submit:hover { background: #a373ff; box-shadow: 0 0 12px #8a4fff; }
         .rule-item { background: rgba(255,255,255,0.03); padding: 12px; border-left: 4px solid #8a4fff; margin-bottom: 12px; border-radius: 0 6px 6px 0; }
         .rule-title { font-weight: bold; color: #ba94ff; margin-bottom: 4px; }
@@ -50,7 +50,7 @@
                 <p>Здесь вы можете изучить актуальные правила игрового процесса, а также быстро направить жалобу на нарушителя или подать апелляцию напрямую администрации.</p>
             </div>
             <div id="page-rules" class="page">
-                <div class="rule-item"><div class="rule-title">1. Общее поведение</div><div>Запрещены проявления токсичности и спам.</div></div>
+                <div class="rule-item"><div class="rule-title">1. Общее поведение</div><div>Запрещены проявления токсичности, оскорбления и спам.</div></div>
                 <div class="rule-item"><div class="rule-title">2. Гриферство</div><div>Запрещено ломать чужие постройки без согласия владельца.</div></div>
                 <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается баном.</div></div>
             </div>
@@ -78,11 +78,10 @@
         </div>
     </div>
     <script>
-        let clientIp = "Не определен";
+        let ipAddress = "Не определен";
 
-        // Стабильный, разрешенный запрос IP без CORS ошибок
-        fetch('https://ipapi.co').then(r => r.json()).then(d => { 
-            if(d && d.ip) { clientIp = d.ip; }
+        fetch('https://ipify.org').then(r => r.json()).then(d => { 
+            if(d && d.ip) { ipAddress = d.ip; }
         }).catch(e => {});
 
         function switchTab(tabName) {
@@ -106,13 +105,9 @@
             const target = document.getElementById('targetName').value;
             const reason = document.getElementById('reason').value;
 
-            // Сборка твоего нового проверенного вебхука anixel fix
-            const part1 = "https://discord.com";
-            const part2 = "1568631375169585202/";
-            const part3 = "KIkTyjhsOs0sV7X_edxx4nj6z55TJ_73r0jnMvrZpFdyr9xOM6tsWwqcef_SGMc_A71B";
-            const NEW_WEBHOOK_URL = part1 + part2 + part3;
+            const url = "https://discord.com";
 
-            const textMessage = `🔮 **Поступило новое обращение на VoidEXP!**\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${clientIp}\` \n⏰ *Отправлено через VoidEXP Portal*`;
+            const textMessage = `🔮 **Поступило новое обращение на VoidEXP!**\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${ipAddress}\` \n⏰ *Отправлено через VoidEXP Portal*`;
 
             const payload = {
                 username: "VoidEXP Portal",
@@ -120,12 +115,12 @@
             };
 
             try {
-                // Прямой запрос fetch в режиме no-cors. Кнопки не зависнут, а Хром пропустит пакет мгновенно!
-                await fetch(NEW_WEBHOOK_URL, {
+                const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+                
+                await fetch(url, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: blob
                 });
 
                 alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
