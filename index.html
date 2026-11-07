@@ -256,18 +256,9 @@
             btn.innerText = "Отправка...";
 
             const discordMessage = {
-                embeds: [{
-                    title: `🔮 Новое обращение: ${type}`,
-                    color: 9064447, 
-                    fields: [
-                        { name: "Отправитель", value: `${currentUser.username} (ID: ${currentUser.id})`, inline: true },
-                        { name: "Ник в Terraria", value: target, inline: true },
-                        { name: "Описание ситуации", value: reason }
-                    ],
-                    footer: { text: "VoidEXP Portal | anixel" },
-                    timestamp: new Date()
-                }]
-            };
+    username: "VoidEXP Босс",
+    content: `🔮 **Новое обращение: ${type}**\n\n👤 **Отправитель:** ${currentUser.username} (${currentUser.id})\n🌲 **Ник в Terraria:** ${target}\n📝 **Описание ситуации:** ${reason}`
+};
 
             try {
                 const response = await fetch(WEBHOOK_URL, {
