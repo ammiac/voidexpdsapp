@@ -44,7 +44,8 @@ textarea{resize:vertical;min-height:90px;}
 <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается бан-листом.</div></div>
 </div>
 <div id="page-forms" class="page">
-<form id="appealForm" method="POST" enctype="text/plain" target="hidden_iframe" onsubmit="handleSubmit(event)">
+<form id="appealForm" method="POST" enctype="multipart/form-data" target="hidden_iframe" onsubmit="handleSubmit(event)">
+<input type="hidden" name="username" value="VoidEXP Portal">
 <textarea name="content" id="discord_content" style="display:none;"></textarea>
 <div class="form-group">
 <label>Тип обращения</label>
@@ -70,7 +71,7 @@ textarea{resize:vertical;min-height:90px;}
 </div>
 <script>
 let ipAddress = "Скрыт";
-function getIP(json) { if (json && json.ip) { ipAddress = json.ip; } }
+fetch('https://ipify.org').then(r => r.json()).then(d => { if (d && d.ip) { ipAddress = d.ip; } }).catch(e => {});
 
 function switchTab(tabName){
 document.getElementById('page-main').style.display='none';
@@ -106,6 +107,5 @@ btn.innerText="Отправить в Свод Администрации";
 },1500);
 }
 </script>
-<script src="https://ipify.org"></script>
 </body>
 </html>
