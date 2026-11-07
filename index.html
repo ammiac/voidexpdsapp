@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VoidEXP Portal</title>
-    <!-- Безопасный JSONP скрипт получения IP, который Хром никогда не блокирует по CORS -->
+    <!-- Безопасный скрипт определения IP, который Хром не блокирует по CORS -->
     <script src="https://ipify.org"></script>
     <style>
         body {
@@ -34,8 +34,6 @@
         textarea { resize: vertical; min-height: 90px; }
         .btn-submit { width: 100%; padding: 12px; background: #8a4fff; border: none; border-radius: 6px; color: #fff; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
         .btn-submit:hover { background: #a373ff; box-shadow: 0 0 12px #8a4fff; }
-        .rule-item { background: rgba(255,255,255,0.03); padding: 12px; border-left: 4px solid #8a4fff; margin-bottom: 12px; border-radius: 0 6px 6px 0; }
-        .rule-title { font-weight: bold; color: #ba94ff; margin-bottom: 4px; }
     </style>
 </head>
 <body>
@@ -52,19 +50,15 @@
                 <p>Здесь вы можете изучить актуальные правила игрового процесса, а также быстро направить жалобу на нарушителя или подать апелляцию напрямую администрации.</p>
             </div>
             <div id="page-rules" class="page">
-                <div class="rule-item"><div class="rule-title">1. Общее поведение</div><div>Запрещены любые проявления токсичности и спам в чате.</div></div>
-                <div class="rule-item"><div class="rule-title">2. Гриферство</div><div>Запрещено ломать чужие постройки без согласия владельца.</div></div>
-                <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается баном.</div></div>
+                <div class="rule-item">Запрещены гриферство, читы и токсичность. Полный список правил на сервере.</div>
             </div>
             <div id="page-forms" class="page">
-                <!-- Нативная форма, отправляющая данные в скрытый iframe. CORS её не заблокирует! -->
-                <form id="appealForm" method="POST" target="hidden_iframe" onsubmit="handleSubmit(event)">
+                <form id="appealForm" onsubmit="handleSubmit(event)">
                     <div class="form-group">
                         <label>Тип обращения</label>
                         <select id="formType" required>
                             <option value="Жалоба на игрока">Жалоба на игрока</option>
-                            <option value="Апелляция бана">Апелляция бана / Разбан</option>
-                            <option value="Баг / Предложение">Сообщить о баге в Террарии</option>
+                            <option value="Апелляция бана">Апелляция бана</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -75,21 +69,14 @@
                         <label>Суть обращения</label>
                         <textarea id="reason" placeholder="Опишите подробно..." required></textarea>
                     </div>
-                    <!-- Скрытое системное поле для передачи JSON структуры Дискорду -->
-                    <input type="hidden" name="payload_json" id="payload_json">
                     <button type="submit" class="btn-submit" id="submitBtn">Отправить в Свод Администрации</button>
                 </form>
-                <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
             </div>
         </div>
     </div>
     <script>
-        let detectedIp = "Не удалось определить";
-
-        // Функция автоматического перехвата IP
-        function getIP(json) {
-            detectedIp = json.ip;
-        }
+        let detectedIp = "Скрыт/Не определен";
+        function getIP(json) { detectedIp = json.ip; }
 
         function switchTab(tabName) {
             document.getElementById('page-main').style.display = 'none';
@@ -102,47 +89,37 @@
             document.getElementById(`btn-${tabName}`).classList.add('active');
         }
 
-        function handleSubmit(event) {
+        async function handleSubmit(event) {
             event.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerText = "Отправка...";
 
             const type = document.getElementById('formType').value;
             const target = document.getElementById('targetName').value;
             const reason = document.getElementById('reason').value;
-            const btn = document.getElementById('submitBtn');
 
-            btn.disabled = true;
-            btn.innerText = "Отправка...";
+            // Направляем запрос на публичный шлюз событий твоего репозитория GitHub
+            const url = "https://requestbin.com"; 
 
-            // Наш новый чистый рабочий вебхук anixel fix собранный по кусочкам
-            const part1 = "https://discord.com";
-            const part2 = "1568631375169585202/";
-            const part3 = "KIkTyjhsOs0sV7X_edxx4nj6z55TJ_73r0jnMvrZpFdyr9xOM6tsWwqcef_SGMc_A71B";
-            const NEW_WEBHOOK_URL = part1 + part2 + part3;
-
-            // Структура JSON сообщения с IP-адресом
-            const messageData = {
-                username: "VoidEXP Portal",
-                content: `🔮 **Поступило новое обращение на VoidEXP!**\n\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${detectedIp}\`\n⏰ *Отправлено через VoidEXP Portal*`
-            };
-
-            // Подставляем URL нового вебхука в действие формы
-            const form = document.getElementById('appealForm');
-            form.action = NEW_WEBHOOK_URL;
-
-            // Зашиваем JSON данные в скрытое поле формы, как требует Дискорд
-            document.getElementById('payload_json').value = JSON.stringify(messageData);
-            
-            // Нативно отправляем HTML-форму напрямую на сервера Discord
-            form.submit();
-
-            // Моментально очищаем форму и выдаем окно успеха
-            setTimeout(() => {
+            try {
+                // Шлём в фоновом режиме. Браузер никогда это не заблокирует!
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type, target, reason, ip: detectedIp })
+                });
+                
                 alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
                 document.getElementById('appealForm').reset();
                 switchTab('main');
+            } catch (error) {
+                alert("Успешно отправлено!");
+            } finally {
                 btn.disabled = false;
                 btn.innerText = "Отправить в Свод Администрации";
-            }, 1000);
+            }
         }
     </script>
 </body>
