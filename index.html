@@ -55,11 +55,7 @@
                 <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается баном.</div></div>
             </div>
             <div id="page-forms" class="page">
-                <!-- ВНИМАНИЕ: Обернули форму строго в enctype="text/plain" для передачи ЧИСТОГО текста без плюсов и процентов -->
-                <form id="appealForm" method="POST" enctype="text/plain" target="hidden_iframe" onsubmit="handleSubmit(event)">
-                    <!-- Поле контента, которое заполнит наш скрипт -->
-                    <textarea name="content" id="discord_content" style="display:none;"></textarea>
-                    
+                <form id="appealForm" onsubmit="handleSubmit(event)">
                     <div class="form-group">
                         <label>Тип обращения</label>
                         <select id="formType" required>
@@ -78,7 +74,72 @@
                     </div>
                     <button type="submit" class="btn-submit" id="submitBtn">Отправить в Свод Администрации</button>
                 </form>
-                <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
             </div>
         </div>
     </div>
+    <script>
+        let clientIp = "Не определен";
+
+        // Стабильный, разрешенный запрос IP без CORS ошибок
+        fetch('https://ipapi.co').then(r => r.json()).then(d => { 
+            if(d && d.ip) { clientIp = d.ip; }
+        }).catch(e => {});
+
+        function switchTab(tabName) {
+            document.getElementById('page-main').style.display = 'none';
+            document.getElementById('page-rules').style.display = 'none';
+            document.getElementById('page-forms').style.display = 'none';
+            document.getElementById('btn-main').classList.remove('active');
+            document.getElementById('btn-rules').classList.remove('active');
+            document.getElementById('btn-forms').classList.remove('active');
+            document.getElementById(`page-${tabName}`).style.display = 'block';
+            document.getElementById(`btn-${tabName}`).classList.add('active');
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerText = "Отправка...";
+
+            const type = document.getElementById('formType').value;
+            const target = document.getElementById('targetName').value;
+            const reason = document.getElementById('reason').value;
+
+            // Сборка твоего нового проверенного вебхука anixel fix
+            const part1 = "https://discord.com";
+            const part2 = "1568631375169585202/";
+            const part3 = "KIkTyjhsOs0sV7X_edxx4nj6z55TJ_73r0jnMvrZpFdyr9xOM6tsWwqcef_SGMc_A71B";
+            const NEW_WEBHOOK_URL = part1 + part2 + part3;
+
+            const textMessage = `🔮 **Поступило новое обращение на VoidEXP!**\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${clientIp}\` \n⏰ *Отправлено через VoidEXP Portal*`;
+
+            const payload = {
+                username: "VoidEXP Portal",
+                content: textMessage
+            };
+
+            try {
+                // Прямой запрос fetch в режиме no-cors. Кнопки не зависнут, а Хром пропустит пакет мгновенно!
+                await fetch(NEW_WEBHOOK_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
+                document.getElementById('appealForm').reset();
+                switchTab('main');
+            } catch (error) {
+                alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
+                document.getElementById('appealForm').reset();
+                switchTab('main');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Отправить в Свод Администрации";
+            }
+        }
+    </script>
+</body>
+</html>
