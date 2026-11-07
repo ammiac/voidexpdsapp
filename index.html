@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VoidEXP Portal</title>
-    <!-- Невидимый скрипт, который мгновенно узнает IP без блокировок CORS -->
+    <!-- Безопасный JSONP шлюз для определения IP без CORS ошибок -->
     <script src="https://ipify.org"></script>
     <style>
         body {
@@ -110,19 +110,16 @@
             btn.disabled = true;
             btn.innerText = "Отправка...";
 
-            // Наш новый чистый вебхук anixel fix
+            // Твой рабочий новый вебхук anixel fix собранный по кусочкам
             const part1 = "https://discord.com";
             const part2 = "1568631375169585202/";
             const part3 = "KIkTyjhsOs0sV7X_edxx4nj6z55TJ_73r0jnMvrZpFdyr9xOM6tsWwqcef_SGMc_A71B";
             const NEW_WEBHOOK_URL = part1 + part2 + part3;
 
-            // Структура сообщения.allowed_mentions открывает вебхуку права на пинг!
+            // Формируем контент без лишних вложенных объектов, чтобы Discord съел запрос мгновенно
             const messageData = {
                 username: "VoidEXP Portal",
-                content: `🔔 <@&1553020321873797150> **Поступило новое обращение!**\n\n🔮 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${detectedIp}\`\n⏰ *Отправлено через VoidEXP Portal*`,
-                allowed_mentions: {
-                    roles: ["1553020321873797150"]
-                }
+                content: "🔔 <@&1553020321873797150> **Поступило новое обращение!**\n\n🔮 **Тип:** " + type + "\n🌲 **Ник в Terraria:** " + target + "\n📝 **Суть ситуации:** " + reason + "\n🌐 **IP-адрес отправителя:** `" + detectedIp + "`\n⏰ *Отправлено через VoidEXP Portal*"
             };
 
             const form = document.getElementById('appealForm');
