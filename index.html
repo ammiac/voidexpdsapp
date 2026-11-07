@@ -44,8 +44,7 @@ textarea{resize:vertical;min-height:90px;}
 <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается бан-листом.</div></div>
 </div>
 <div id="page-forms" class="page">
-<form id="appealForm" method="POST" enctype="multipart/form-data" target="hidden_iframe" onsubmit="handleSubmit(event)">
-<input type="hidden" name="username" value="VoidEXP Portal">
+<form id="appealForm" method="POST" enctype="text/plain" target="hidden_iframe" onsubmit="handleSubmit(event)">
 <textarea name="content" id="discord_content" style="display:none;"></textarea>
 <div class="form-group">
 <label>Тип обращения</label>
@@ -80,7 +79,6 @@ document.getElementById('btn-forms').classList.remove('active');
 document.getElementById(`page-${tabName}`).style.display='block';
 document.getElementById(`btn-${tabName}`).classList.add('active');
 }
-
 function handleSubmit(event){
 const btn=document.getElementById('submitBtn');
 btn.disabled=true;
@@ -88,16 +86,12 @@ btn.innerText="Отправка...";
 const type=document.getElementById('formType').value;
 const target=document.getElementById('targetName').value;
 const reason=document.getElementById('reason').value;
-const part1="https://discord.com";
-const part2="1568683939361718274/";
-const p3="B3vTTzQ5NcnVG4hexxz1qmhp7D3U2sQ_HQiIpWIEKKHb46Pf0krPoABMmXl8CjvqRfFz";
-const url=part1+part2+p3;
+const url="https://discord.com";
 const textMessage=`🔮 **Поступило новое обращение на VoidEXP!**\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n⏰ *Отправлено через VoidEXP Portal*`;
 const form=document.getElementById('appealForm');
 form.action=url;
 document.getElementById('discord_content').value=textMessage;
 setTimeout(()=>{
-alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
 document.getElementById('appealForm').reset();
 switchTab('main');
 btn.disabled=false;
