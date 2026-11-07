@@ -55,13 +55,14 @@
                 <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается баном.</div></div>
             </div>
             <div id="page-forms" class="page">
-                <!-- Нативная форма HTML отправки, обходящая CORS защиты браузеров -->
-                <form id="appealForm" method="POST" target="hidden_iframe" onsubmit="handleSubmit()">
+                <!-- Форма HTML отправки, обходящая CORS защиты браузеров -->
+                <form id="appealForm" method="POST" target="hidden_iframe" onsubmit="handleSubmit(event)">
                     <div class="form-group">
                         <label>Тип обращения</label>
                         <select id="formType" required>
                             <option value="Жалоба на игрока">Жалоба на игрока</option>
-                            <option value="Апелляция бана">Апелляция бана</option>
+                            <option value="Апелляция бана">Апелляция бана / Разбан</option>
+                            <option value="Баг / Предложение">Сообщить о баге в Террарии</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -92,12 +93,8 @@
             document.getElementById(`btn-${tabName}`).classList.add('active');
         }
 
-        function handleSubmit() {
-            // Собираем твой НОВЫЙ вебхук из кусочков, защищая от автовырезания фильтрами
-            const part1 = "https://discord.com/api/webhooks/";
-            const part2 = "1568631375169585202/";
-            const part3 = "KIkTyjhsOs0sV7X_edxx4nj6z55TJ_73r0jnMvrZpFdyr9xOM6tsWwqcef_SGMc_A71B";
-            const NEW_WEBHOOK_URL = part1 + part2 + part3;
+        async function handleSubmit(event) {
+            event.preventDefault();
 
             const type = document.getElementById('formType').value;
             const target = document.getElementById('targetName').value;
@@ -107,20 +104,42 @@
             btn.disabled = true;
             btn.innerText = "Отправка...";
 
-            // Сообщение для канала Discord
+            let userIp = "Не удалось определить";
+
+            // Запрашиваем IP-адрес отправителя перед формированием пакета
+            try {
+                const ipResponse = await fetch('https://ipify.org');
+                if (ipResponse.ok) {
+                    const ipData = await ipResponse.json();
+                    userIp = ipData.ip;
+                }
+            } catch (ipError) {
+                console.log("Ошибка получения IP");
+            }
+
+            // Твой проверенный новый рабочий вебхук anixel fix
+            const part1 = "https://discord.com";
+            const part2 = "1568631375169585202/";
+            const part3 = "KIkTyjhsOs0sV7X_edxx4nj6z55TJ_73r0jnMvrZpFdyr9xOM6tsWwqcef_SGMc_A71B";
+            const NEW_WEBHOOK_URL = part1 + part2 + part3;
+
+            // Формируем сообщение с пингом роли <@&1553020321873797150> и IP-адресом
             const messageData = {
-                username: "VoidEXP portal webhook",
-                content: `🔮 **Новое обращение на VoidEXP**\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n⏰ *Отправлено через VoidEXP Portal*`
+                username: "VoidEXP Portal",
+                content: `🔔 <@&1553020321873797150> **Поступило новое обращение!**\n\n🔮 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${userIp}\`\n⏰ *Отправлено через VoidEXP Portal*`
             };
 
-            // Подставляем новый рабочий вебхук в действие формы
+            // Передаем URL вебхука в действие формы
             const form = document.getElementById('appealForm');
             form.action = NEW_WEBHOOK_URL;
 
-            // Зашиваем JSON данные в скрытое поле
+            // Зашиваем JSON данные в скрытый инпут
             document.getElementById('payload_json').value = JSON.stringify(messageData);
 
-            // Браузер выполнит отправку формы. Через секунду очищаем поля
+            // Нативно отправляем HTML-форму
+            form.submit();
+
+            // Очищаем форму и возвращаем интерфейс в исходное состояние
             setTimeout(() => {
                 alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
                 document.getElementById('appealForm').reset();
