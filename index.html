@@ -51,7 +51,7 @@ textarea{resize:vertical;min-height:90px;}
 <label>Тип обращения</label>
 <select id="formType" required>
 <option value="Жалоба на игрока">Жалоба на игрока</option>
-<option value="Апелляция бана">Апелляция бана</option>
+<option value="Апелляция бана">Апелляция бана / Разбан</option>
 <option value="Баг / Предложение">Сообщить о баге в Террарии</option>
 </select>
 </div>
@@ -82,7 +82,6 @@ document.getElementById(`btn-${tabName}`).classList.add('active');
 }
 
 function handleSubmit(event){
-event.preventDefault();
 const btn=document.getElementById('submitBtn');
 btn.disabled=true;
 btn.innerText="Отправка...";
@@ -97,7 +96,6 @@ const textMessage=`🔮 **Поступило новое обращение на 
 const form=document.getElementById('appealForm');
 form.action=url;
 document.getElementById('discord_content').value=textMessage;
-form.submit();
 setTimeout(()=>{
 alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
 document.getElementById('appealForm').reset();
