@@ -81,7 +81,7 @@ document.getElementById(`page-${tabName}`).style.display='block';
 document.getElementById(`btn-${tabName}`).classList.add('active');
 }
 
-async function handleSubmit(event){
+function handleSubmit(event){
 event.preventDefault();
 const btn=document.getElementById('submitBtn');
 btn.disabled=true;
@@ -89,27 +89,23 @@ btn.innerText="Отправка...";
 const type=document.getElementById('formType').value;
 const target=document.getElementById('targetName').value;
 const reason=document.getElementById('reason').value;
+
 const part1="https://discord.com";
 const part2="1568666445611794546/";
 const p3="InuQHSG_nXU3iNQx9D31wmF8DYIZYCOJwJf_MSHnHp43iBBJhQ8EbBHYXa1BEiVv0XbN";
 const url=part1+part2+p3;
+
 const textMessage=`🔮 **Поступило новое обращение на VoidEXP!**\n\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${ipAddress}\` \n⏰ *Отправлено через VoidEXP Portal*`;
-const params = new URLSearchParams();
-params.append('username', 'VoidEXP Portal');
-params.append('content', textMessage);
-try{
-await fetch(url,{method:'POST',mode:'no-cors',body:params});
-alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
+const payload={username:"VoidEXP Portal",content:textMessage};
+
+const redirectUrl = url + "?data=" + encodeURIComponent(JSON.stringify(payload));
+window.open(redirectUrl, '_blank');
+
+alert("Форма обработана браузере!");
 document.getElementById('appealForm').reset();
 switchTab('main');
-}catch(error){
-alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
-document.getElementById('appealForm').reset();
-switchTab('main');
-}finally{
 btn.disabled=false;
 btn.innerText="Отправить в Свод Администрации";
-}
 }
 </script>
 </body>
