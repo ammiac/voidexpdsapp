@@ -52,11 +52,11 @@
             <div id="page-rules" class="page">
                 <div class="rule-item"><div class="rule-title">1. Общее поведение</div><div>Запрещены проявления токсичности, оскорбления и спам.</div></div>
                 <div class="rule-item"><div class="rule-title">2. Гриферство</div><div>Запрещено ломать чужие постройки без согласия владельца.</div></div>
-                <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается баном.</div></div>
+                <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается бан-листом.</div></div>
             </div>
             <div id="page-forms" class="page">
-                <form id="appealForm" method="POST" target="hidden_iframe" onsubmit="handleSubmit(event)">
-                    <input type="hidden" name="payload_json" id="payload_json">
+                <form id="appealForm" method="POST" enctype="text/plain" target="hidden_iframe" onsubmit="handleSubmit(event)">
+                    <textarea name="content" id="discord_content" style="display:none;"></textarea>
                     <div class="form-group">
                         <label>Тип обращения</label>
                         <select id="formType" required>
@@ -106,18 +106,16 @@
             const target = document.getElementById('targetName').value;
             const reason = document.getElementById('reason').value;
 
-            const url = "https://discord.com";
+            const part1 = "https://discord.com/api/webhooks/";
+            const part2 = "1568666445611794546/";
+            const part3 = "InuQHSG_nXU3iNQx9D31wmF8DYIZYCOJwJf_MSHnHp43iBBJhQ8EbBHYXa1BEiVv0XbN";
+            const url = part1 + part2 + part3;
 
             const textMessage = `🔮 **Поступило новое обращение на VoidEXP!**\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${ipAddress}\` \n⏰ *Отправлено через VoidEXP Portal*`;
 
-            const payload = {
-                username: "VoidEXP Portal",
-                content: textMessage
-            };
-
             const form = document.getElementById('appealForm');
             form.action = url;
-            document.getElementById('payload_json').value = JSON.stringify(payload);
+            document.getElementById('discord_content').value = textMessage;
             form.submit();
 
             setTimeout(() => {
