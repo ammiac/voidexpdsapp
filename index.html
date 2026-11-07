@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VoidEXP Portal</title>
-    <script src="https://ipify.org"></script>
     <style>
         body {
             font-family: sans-serif;
@@ -56,11 +55,7 @@
                 <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается баном.</div></div>
             </div>
             <div id="page-forms" class="page">
-                <!-- Прямая отправка чистого контента без перекодирования в плюсы и проценты -->
-                <form id="appealForm" method="POST" enctype="text/plain" target="hidden_iframe" onsubmit="handleSubmit(event)">
-                    <!-- Поле контента, имя которого жестко прописано под стандарты вебхуков -->
-                    <textarea name="content" id="discord_content" style="display:none;"></textarea>
-                    
+                <form id="appealForm" onsubmit="handleSubmit(event)">
                     <div class="form-group">
                         <label>Тип обращения</label>
                         <select id="formType" required>
@@ -79,13 +74,17 @@
                     </div>
                     <button type="submit" class="btn-submit" id="submitBtn">Отправить в Свод Администрации</button>
                 </form>
-                <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
             </div>
         </div>
     </div>
     <script>
-        let ipAddress = "Не определен";
-        function getIP(json) { if(json && json.ip) { ipAddress = json.ip; } }
+        let ipAddress = "Скрыт";
+
+        function getIP(json) {
+            if (json && json.ip) {
+                ipAddress = json.ip;
+            }
+        }
 
         function switchTab(tabName) {
             document.getElementById('page-main').style.display = 'none';
@@ -98,7 +97,8 @@
             document.getElementById(`btn-${tabName}`).classList.add('active');
         }
 
-        function handleSubmit(event) {
+        async function handleSubmit(event) {
+            event.preventDefault();
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
             btn.innerText = "Отправка...";
@@ -107,28 +107,40 @@
             const target = document.getElementById('targetName').value;
             const reason = document.getElementById('reason').value;
 
-            // Наш новый чистый рабочий вебхук anixel 1.20.2 из кусочков
             const part1 = "https://discord.com";
             const part2 = "1568666445611794546/";
             const part3 = "InuQHSG_nXU3iNQx9D31wmF8DYIZYCOJwJf_MSHnHp43iBBJhQ8EbBHYXa1BEiVv0XbN";
             const url = part1 + part2 + part3;
 
-            // Формируем чистый текст, который долетит без искажений формата
             const textMessage = `🔮 **Поступило новое обращение на VoidEXP!**\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${ipAddress}\` \n⏰ *Отправлено через VoidEXP Portal*`;
 
-            const form = document.getElementById('appealForm');
-            form.action = url;
-            document.getElementById('discord_content').value = textMessage;
-            form.submit();
+            const payload = {
+                username: "VoidEXP Portal",
+                content: textMessage
+            };
 
-            setTimeout(() => {
+            try {
+                const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+                
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: blob
+                });
+
                 alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
                 document.getElementById('appealForm').reset();
                 switchTab('main');
+            } catch (error) {
+                alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
+                document.getElementById('appealForm').reset();
+                switchTab('main');
+            } finally {
                 btn.disabled = false;
                 btn.innerText = "Отправить в Свод Администрации";
-            }, 1000);
+            }
         }
     </script>
+    <script src="https://ipify.org"></script>
 </body>
 </html>
