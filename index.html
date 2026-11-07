@@ -241,7 +241,9 @@
             event.preventDefault();
             
             // Твой личный рабочий вебхук сервера VoidEXP
-            const WEBHOOK_URL = "https://allorigins.win";
+            const part1 = "https://allorigins.win";
+const part2 = "1yE6kOmHjUcza-SlR11vrycIdXC64xh0HUzkQaiPXE5K7bCPER-tdf9WahkY5IdLSmiw";
+const WEBHOOK_URL = part1 + part2;
             const type = document.getElementById('formType').value;
             const target = document.getElementById('targetName').value;
             const reason = document.getElementById('reason').value;
