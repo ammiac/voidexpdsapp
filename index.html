@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoidEXP Portal</title>
+    <!-- Официальный SDK Дискорда -->
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle, #1a0b2e 0%, #0a0412 100%);
+            color: #e2d5f3;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .window {
+            background: rgba(20, 10, 35, 0.85);
+            border: 2px solid #8a4fff;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 0 20px rgba(138, 79, 255, 0.4);
+            overflow: hidden;
+        }
+        .header {
+            background: #251242;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 2px solid #8a4fff;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #ba94ff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px #8a4fff;
+        }
+        .nav-tabs {
+            display: flex;
+            background: #140a23;
+            border-bottom: 1px solid #4a2b84;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            color: #a38ec2;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .tab-btn.active {
+            color: #fff;
+            background: #321957;
+            border-bottom: 3px solid #ba94ff;
+        }
+        .content {
+            padding: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        .page { display: none; }
+        .page.active { display: block; }
+        
+        .profile {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .profile img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #ba94ff;
+            margin-right: 15px;
+        }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #ba94ff; font-size: 14px; }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            background: #0d0617;
+            border: 1px solid #4a2b84;
+            border-radius: 6px;
+            color: #fff;
+            box-sizing: border-box;
+        }
+        textarea { resize: vertical; min-height: 80px; }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #ba94ff;
+            box-shadow: 0 0 5px rgba(186, 148, 255, 0.5);
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: #8a4fff;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-submit:hover { background: #a373ff; box-shadow: 0 0 10px #8a4fff; }
+        
+        .rule-item {
+            background: rgba(255,255,255,0.03);
+            padding: 10px;
+            border-left: 3px solid #8a4fff;
+            margin-bottom: 10px;
+            border-radius: 0 6px 6px 0;
+        }
+        .rule-title { font-weight: bold; color: #ba94ff; margin-bottom: 3px; }
+    </style>
+</head>
+<body>
+
+    <div class="window">
+        <div class="header">
+            <h1>VoidEXP Portal</h1>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('main')">Главная</button>
+            <button class="tab-btn" onclick="switchTab('rules')">Правила</button>
+            <button class="tab-btn" onclick="switchTab('forms')">Обращения</button>
+        </div>
+
+        <div class="content">
+            <!-- ГЛАВНАЯ СТРАНИЦА -->
+            <div id="page-main" class="page active">
+                <div class="profile">
+                    <img id="avatar" src="https://discordapp.com" alt="Avatar">
+                    <div>
+                        <div style="font-size: 12px; color: #a38ec2;">Приветствуем в Пустоте,</div>
+                        <div id="username" style="font-weight: bold; font-size: 18px;">Игрок VoidEXP</div>
+                    </div>
+                </div>
+                <p>Добро пожаловать в официальное mini-приложение сервера Terraria <b>VoidEXP</b>!</p>
+                <p>Здесь вы можете ознакомиться с актуальным сводом правил игрового процесса, а также быстро подать жалобу на нарушителя или отправить апелляцию администрации.</p>
+            </div>
+
+            <!-- ПРАВИЛА -->
+            <div id="page-rules" class="page">
+                <div class="rule-item">
+                    <div class="rule-title">1. Общее поведение</div>
+                    <div>Запрещены любые проявления токсичности, оскорбления игроков и спам в чате. Респект — превыше всего.</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-title">2. Гриферство</div>
+                    <div>Запрещено ломать чужие постройки, воровать вещи из сундуков и затапливать лавой/водой чужие зоны без согласия владельца.</div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-title">3. Чит-программы</div>
+                    <div>Использование стороннего софта, заменяющего инвентарь, или программ на бессмертие карается моментальным баном без права апелляции.</div>
+                </div>
+                <p style="font-size: 12px; color: #a38ec2; text-align: center;">Полный список правил доступен в закрепе ДС-сервера.</p>
+            </div>
+
+            <!-- ФОРМА ОБРАЩЕНИЙ -->
+            <div id="page-forms" class="page">
+                <form id="appealForm" onsubmit="sendReport(event)">
+                    <div class="form-group">
+                        <label for="formType">Тип обращения</label>
+                        <select id="formType" required>
+                            <option value="Жалоба на игрока">Жалоба на игрока</option>
+                            <option value="Апелляция бана">Апелляция бана / Разбан</option>
+                            <option value="Баг / Предложение">Сообщить о баге в Террарии</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="targetName">Никнейм (ваш или нарушителя в Террарии)</label>
+                        <input type="text" id="targetName" placeholder="Например: TerrariaPlayer123" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reason">Суть обращения / Описание ситуации</label>
+                        <textarea id="reason" placeholder="Опишите подробно, что случилось..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit" id="submitBtn">Отправить в Свод Администрации</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Инициализация Discord SDK с вашим ID
+        const discordSdk = new Discord.DiscordSDK("1568576590470717450");
+        let currentUser = { username: "Игрок VoidEXP", id: "Неизвестно" };
+
+        async function setupDiscord() {
+            try {
+                await discordSdk.ready();
+                const { code } = await discordSdk.commands.authorize({
+                    client_id: "1568576590470717450",
+                    response_type: "code",
+                    state: "1",
+                    prompt: "none",
+                    scope: ["identify"],
+                });
+
+                if (discordSdk.context && discordSdk.context.user) {
+                    currentUser = discordSdk.context.user;
+                    document.getElementById('username').innerText = currentUser.username;
+                    if (currentUser.avatar) {
+                        document.getElementById('avatar').src = `https://discordapp.com{currentUser.id}/${currentUser.avatar}.png`;
+                    }
+                }
+            } catch (e) { console.log("Запущено вне Discord (режим разработки)"); }
+        }
+        setupDiscord();
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(`page-${tabName}`).classList.add('active');
+            if(event && event.target) event.target.classList.add('active');
+        }
+
+        // Отправка формы через ваш рабочий Вебхук
+        async function sendReport(event) {
+            event.preventDefault();
+            
+            const WEBHOOK_URL = "https://discord.com"; 
+
+            const type = document.getElementById('formType').value;
+            const target = document.getElementById('targetName').value;
+            const reason = document.getElementById('reason').value;
+            const btn = document.getElementById('submitBtn');
+
+            btn.disabled = true;
+            btn.innerText = "Отправка...";
+
+            const discordMessage = {
+                embeds: [{
+                    title: `🔮 Новое обращение: ${type}`,
+                    color: 9064447, 
+                    fields: [
+                        { name: "Отправитель в Discord", value: `${currentUser.username} (ID: ${currentUser.id})`, inline: true },
+                        { name: "Ник в Terraria", value: target, inline: true },
+                        { name: "Описание ситуации", value: reason }
+                    ],
+                    footer: { text: "VoidEXP Portal | anixel" },
+                    timestamp: new Date()
+                }]
+            };
+
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(discordMessage)
+                });
+
+                if (response.ok) {
+                    alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
+                    document.getElementById('appealForm').reset();
+                    switchTab('main');
+                } else {
+                    alert("Произошла ошибка при отправке вебхука.");
+                }
+            } catch (error) {
+                alert("Не удалось связаться с сервером Discord.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Отправить в Свод Администрации";
+            }
+        }
+    </script>
+</body>
+</html>
+
