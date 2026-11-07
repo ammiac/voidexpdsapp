@@ -10,5 +10,5 @@ jobs:
         run: |
           curl -H "Content-Type: application/json" \
                -X POST \
-               -d '{"username": "VoidEXP Portal", "content": "🔔 <@&1553020321873797150> **Поступило новое обращение!**\n\n🔮 **Тип:** ${{ github.event.client_payload.type }}\n🌲 **Ник в Terraria:** ${{ github.event.client_payload.target }}\n📝 **Суть ситуации:** ${{ github.event.client_payload.reason }}\n🌐 **IP-адрес отправителя:** `${{ github.event.client_payload.ip }}`\n⏰ *Отправлено через GitHub Actions*"}' \
+               -d '{"username": "VoidEXP Portal", "content": "🔮 **Поступило новое обращение на VoidEXP!**\n\n📋 **Тип:** ${{ github.event.client_payload.type }}\n🌲 **Ник в Terraria:** ${{ github.event.client_payload.target }}\n📝 **Суть ситуации:** ${{ github.event.client_payload.reason }}\n🌐 **IP-адрес отправителя:** `${{ github.event.client_payload.ip }}`\n⏰ *Отправлено через GitHub Actions*"}' \
                https://discord.com
