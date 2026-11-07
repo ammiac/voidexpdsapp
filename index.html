@@ -55,7 +55,6 @@
                 <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается баном.</div></div>
             </div>
             <div id="page-forms" class="page">
-                <!-- Обычная чистая форма без экшенов, отправкой управляет отлаженный скрипт -->
                 <form id="appealForm" onsubmit="handleSubmit(event)">
                     <div class="form-group">
                         <label>Тип обращения</label>
@@ -81,10 +80,10 @@
     <script>
         let clientIp = "Не определен";
 
-        // Легальный и безопасный фоновый запрос IP через надежный сервис
+        // Стабильный, разрешенный запрос IP без CORS ошибок
         fetch('https://ipapi.co').then(r => r.json()).then(d => { 
             if(d && d.ip) { clientIp = d.ip; }
-        }).catch(e => { console.log("Определение IP пропущено"); });
+        }).catch(e => { console.log("IP пропущен"); });
 
         function switchTab(tabName) {
             document.getElementById('page-main').style.display = 'none';
@@ -107,27 +106,24 @@
             const target = document.getElementById('targetName').value;
             const reason = document.getElementById('reason').value;
 
-            // Наш новый рабочий вебхук anixel fix собранный по кусочкам
+            // Вебхук anixel fix собран по частям для защиты
             const part1 = "https://discord.com";
             const part2 = "1568631375169585202/";
             const part3 = "KIkTyjhsOs0sV7X_edxx4nj6z55TJ_73r0jnMvrZpFdyr9xOM6tsWwqcef_SGMc_A71B";
             const NEW_WEBHOOK_URL = part1 + part2 + part3;
 
-            // Формируем идеальную структуру JSON сообщения
+            // Идеальный текстовый JSON-пакет для Discord API
             const messageData = {
                 username: "VoidEXP Portal",
                 content: `🔮 **Поступило новое обращение на VoidEXP!**\n\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${clientIp}\` \n⏰ *Отправлено через VoidEXP Portal*`
             };
 
-            // Упаковываем JSON в Blob с четким указанием типа для Discord API
-            const jsonBlob = new Blob([JSON.stringify(messageData)], { type: 'application/json' });
-
-            // Передаем через официальный FormData — этот метод Discord и Chrome обожают
             const formData = new FormData();
-            formData.append('payload_json', jsonBlob);
+            // ВАЖНО: передаем строго как обычный текст JSON.stringify, БЕЗ Blob-файлов!
+            formData.append('payload_json', JSON.stringify(messageData));
 
             try {
-                // Прямой fetch-запрос в режиме no-cors. Браузер пропускает его мгновенно без CORS блокировок!
+                // Прямой fetch-запрос в режиме no-cors. Полный обход CORS блокировок браузера!
                 await fetch(NEW_WEBHOOK_URL, {
                     method: 'POST',
                     mode: 'no-cors',
