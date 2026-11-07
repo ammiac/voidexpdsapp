@@ -67,8 +67,7 @@ textarea{resize:vertical;min-height:90px;}
 </div>
 </div>
 <script>
-let ipAddress = "Скрыт";
-fetch('https://ipapi.co').then(r => r.json()).then(d => { if(d && d.ip) { ipAddress = d.ip; } }).catch(e => {});
+let ipAddress = "Определяется...";
 
 function switchTab(tabName){
 document.getElementById('page-main').style.display='none';
@@ -86,15 +85,25 @@ event.preventDefault();
 const btn=document.getElementById('submitBtn');
 btn.disabled=true;
 btn.innerText="Отправка...";
+
 const type=document.getElementById('formType').value;
 const target=document.getElementById('targetName').value;
 const reason=document.getElementById('reason').value;
-const part1="https://discord.com";
-const part2="1568666445611794546/";
-const part3="InuQHSG_nXU3iNQx9D31wmF8DYIZYCOJwJf_MSHnHp43iBBJhQ8EbBHYXa1BEiVv0XbN";
-const url=part1+part2+part3;
+
+try {
+const r = await fetch('https://ipify.org');
+const d = await r.json();
+if(d && d.ip) { ipAddress = d.ip; }
+} catch(e) { ipAddress = "Скрыт"; }
+
+const p1="https://discord.com";
+const p2="1568666445611794546/";
+const p3="InuQHSG_nXU3iNQx9D31wmF8DYIZYCOJwJf_MSHnHp43iBBJhQ8EbBHYXa1BEiVv0XbN";
+const url=p1+p2+p3;
+
 const textMessage=`🔮 **Поступило новое обращение на VoidEXP!**\n\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${ipAddress}\` \n⏰ *Отправлено через VoidEXP Portal*`;
 const payload={username:"VoidEXP Portal",content:textMessage};
+
 try{
 const blob=new Blob([JSON.stringify(payload)],{type:'text/plain'});
 await fetch(url,{method:'POST',mode:'no-cors',body:blob});
