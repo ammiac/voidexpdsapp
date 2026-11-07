@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VoidEXP Portal</title>
+    <!-- Невидимый скрипт, который мгновенно узнает IP без блокировок CORS -->
+    <script src="https://ipify.org"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -51,7 +53,7 @@
             </div>
             <div id="page-rules" class="page">
                 <div class="rule-item"><div class="rule-title">1. Общее поведение</div><div>Запрещены любые проявления токсичности и спам.</div></div>
-                <div class="rule-item"><div class="rule-title">2. Гриферство</div><div>Запрещено ломать чужие постройки без согласия владельца.</div></div>
+                <div class="rule-item"><div class="rule-title">2. Гриферство</div><div>Запрещено ломать чужие постройки без согласия владельца зоны.</div></div>
                 <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается баном.</div></div>
             </div>
             <div id="page-forms" class="page">
@@ -82,6 +84,13 @@
         </div>
     </div>
     <script>
+        let detectedIp = "Не удалось определить";
+
+        // Функция автоматического получения IP через JSONP шлюз (CORS защита её игнорирует!)
+        function getIP(json) {
+            detectedIp = json.ip;
+        }
+
         function switchTab(tabName) {
             document.getElementById('page-main').style.display = 'none';
             document.getElementById('page-rules').style.display = 'none';
@@ -93,7 +102,7 @@
             document.getElementById(`btn-${tabName}`).classList.add('active');
         }
 
-        async function handleSubmit(event) {
+        function handleSubmit(event) {
             event.preventDefault();
 
             const type = document.getElementById('formType').value;
@@ -104,29 +113,16 @@
             btn.disabled = true;
             btn.innerText = "Отправка...";
 
-            let userIp = "Не удалось определить";
-
-            // Запрашиваем IP-адрес отправителя перед формированием пакета
-            try {
-                const ipResponse = await fetch('https://ipify.org');
-                if (ipResponse.ok) {
-                    const ipData = await ipResponse.json();
-                    userIp = ipData.ip;
-                }
-            } catch (ipError) {
-                console.log("Ошибка получения IP");
-            }
-
             // Твой проверенный новый рабочий вебхук anixel fix
             const part1 = "https://discord.com";
             const part2 = "1568631375169585202/";
             const part3 = "KIkTyjhsOs0sV7X_edxx4nj6z55TJ_73r0jnMvrZpFdyr9xOM6tsWwqcef_SGMc_A71B";
             const NEW_WEBHOOK_URL = part1 + part2 + part3;
 
-            // Формируем сообщение с пингом роли <@&1553020321873797150> и IP-адресом
+            // Формируем сообщение с пингом роли <@&1553020321873797150> и определенным IP
             const messageData = {
                 username: "VoidEXP Portal",
-                content: `🔔 <@&1553020321873797150> **Поступило новое обращение!**\n\n🔮 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${userIp}\`\n⏰ *Отправлено через VoidEXP Portal*`
+                content: `🔔 <@&1553020321873797150> **Поступило новое обращение!**\n\n🔮 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${detectedIp}\`\n⏰ *Отправлено через VoidEXP Portal*`
             };
 
             // Передаем URL вебхука в действие формы
