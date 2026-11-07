@@ -8,190 +8,75 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: radial-gradient(circle, #1a0b2e 0%, #0a0412 100%);
-            color: #e2d5f3;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
+            color: #e2d5f3; margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; box-sizing: border-box;
         }
         .window {
-            background: rgba(20, 10, 35, 0.9);
-            border: 2px solid #8a4fff;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 0 25px rgba(138, 79, 255, 0.5);
-            overflow: hidden;
+            background: rgba(20, 10, 35, 0.95);
+            border: 2px solid #8a4fff; border-radius: 12px;
+            width: 100%; max-width: 500px;
+            box-shadow: 0 0 25px rgba(138, 79, 255, 0.5); overflow: hidden;
         }
-        .header {
-            background: #251242;
-            padding: 15px;
-            text-align: center;
-            border-bottom: 2px solid #8a4fff;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-            color: #ba94ff;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 8px #8a4fff;
-        }
-        .nav-tabs {
-            display: flex;
-            background: #140a23;
-            border-bottom: 1px solid #4a2b84;
-        }
-        .tab-btn {
-            flex: 1;
-            padding: 12px;
-            background: none;
-            border: none;
-            color: #a38ec2;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-            transition: 0.3s;
-            outline: none;
-        }
-        .tab-btn.active {
-            color: #fff;
-            background: #321957;
-            border-bottom: 3px solid #ba94ff;
-        }
-        .content {
-            padding: 20px;
-            max-height: 60vh;
-            overflow-y: auto;
-        }
+        .header { background: #251242; padding: 15px; text-align: center; border-bottom: 2px solid #8a4fff; }
+        .header h1 { margin: 0; font-size: 24px; color: #ba94ff; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 8px #8a4fff; }
+        .nav-tabs { display: flex; background: #140a23; border-bottom: 1px solid #4a2b84; }
+        .tab-btn { flex: 1; padding: 12px; background: none; border: none; color: #a38ec2; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.3s; outline: none; }
+        .tab-btn.active { color: #fff; background: #321957; border-bottom: 3px solid #ba94ff; }
+        .content { padding: 20px; max-height: 60vh; overflow-y: auto; }
         .page { display: none; }
         .page.active { display: block; }
-        
-        .profile {
-            display: flex;
-            align-items: center;
-            background: rgba(255,255,255,0.05);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-        .profile img {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            border: 2px solid #ba94ff;
-            margin-right: 15px;
-        }
-        
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; color: #ba94ff; font-size: 14px; }
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            background: #0d0617;
-            border: 1px solid #4a2b84;
-            border-radius: 6px;
-            color: #fff;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
+        input, select, textarea { width: 100%; padding: 10px; background: #0d0617; border: 1px solid #4a2b84; border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 14px; }
         textarea { resize: vertical; min-height: 90px; }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #ba94ff;
-            box-shadow: 0 0 8px rgba(186, 148, 255, 0.6);
-        }
-        .btn-submit {
-            width: 100%;
-            padding: 12px;
-            background: #8a4fff;
-            border: none;
-            border-radius: 6px;
-            color: #fff;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+        .btn-submit { width: 100%; padding: 12px; background: #8a4fff; border: none; border-radius: 6px; color: #fff; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
         .btn-submit:hover { background: #a373ff; box-shadow: 0 0 12px #8a4fff; }
-        
-        .rule-item {
-            background: rgba(255,255,255,0.03);
-            padding: 12px;
-            border-left: 4px solid #8a4fff;
-            margin-bottom: 12px;
-            border-radius: 0 6px 6px 0;
-        }
+        .rule-item { background: rgba(255,255,255,0.03); padding: 12px; border-left: 4px solid #8a4fff; margin-bottom: 12px; border-radius: 0 6px 6px 0; }
         .rule-title { font-weight: bold; color: #ba94ff; margin-bottom: 4px; }
     </style>
 </head>
 <body>
-
     <div class="window">
-        <div class="header">
-            <h1>VoidEXP Portal</h1>
-        </div>
-        
+        <div class="header"><h1>VoidEXP Portal</h1></div>
         <div class="nav-tabs">
             <button id="btn-main" class="tab-btn active" onclick="switchTab('main')">Главная</button>
             <button id="btn-rules" class="tab-btn" onclick="switchTab('rules')">Правила</button>
             <button id="btn-forms" class="tab-btn" onclick="switchTab('forms')">Обращения</button>
         </div>
-
         <div class="content">
             <div id="page-main" class="page active">
-                <div class="profile">
-                    <img id="avatar" src="https://discordapp.com" alt="Avatar">
-                    <div>
-                        <div style="font-size: 12px; color: #a38ec2;">Приветствуем в Пустоте,</div>
-                        <div id="username" style="font-weight: bold; font-size: 18px;">Игрок VoidEXP</div>
-                    </div>
-                </div>
                 <p>Добро пожаловать в официальный портал сервера Terraria <b>VoidEXP</b>!</p>
                 <p>Здесь вы можете изучить актуальные правила игрового процесса, а также быстро направить жалобу на нарушителя или подать апелляцию напрямую администрации.</p>
             </div>
-
             <div id="page-rules" class="page">
-                <div class="rule-item">
-                    <div class="rule-title">1. Общее поведение</div>
-                    <div>Запрещены любые проявления токсичности, оскорбления игроков и спам в чате. Уважайте других участников.</div>
-                </div>
-                <div class="rule-item">
-                    <div class="rule-title">2. Гриферство</div>
-                    <div>Запрещено ломать чужие постройки, воровать вещи из сундуков и портить карту без согласия владельца.</div>
-                </div>
-                <div class="rule-item">
-                    <div class="rule-title">3. Чит-программы</div>
-                    <div>Использование стороннего софта или читов на бессмертие карается моментальным баном.</div>
-                </div>
+                <div class="rule-item"><div class="rule-title">1. Общее поведение</div><div>Запрещены любые проявления токсичности, оскорбления игроков и спам в чате.</div></div>
+                <div class="rule-item"><div class="rule-title">2. Гриферство</div><div>Запрещено ломать чужие постройки без согласия владельца зоны.</div></div>
+                <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается моментальным баном.</div></div>
             </div>
-
             <div id="page-forms" class="page">
                 <form id="appealForm" onsubmit="sendReport(event)">
                     <div class="form-group">
-                        <label for="formType">Тип обращения</label>
+                        <label>Тип обращения</label>
                         <select id="formType" required>
                             <option value="Жалоба на игрока">Жалоба на игрока</option>
                             <option value="Апелляция бана">Апелляция бана / Разбан</option>
-                            <option value="Баг / Предложение">Сообщить о баге в Террарии</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="targetName">Никнейм игрока в Terraria</label>
+                        <label>Никнейм игрока в Terraria</label>
                         <input type="text" id="targetName" placeholder="Например: Player123" required>
                     </div>
                     <div class="form-group">
-                        <label for="reason">Суть обращения / Описание ситуации</label>
-                        <textarea id="reason" placeholder="Опишите подробно, что произошло..." required></textarea>
+                        <label>Суть обращения</label>
+                        <textarea id="reason" placeholder="Опишите подробно..." required></textarea>
                     </div>
                     <button type="submit" class="btn-submit" id="submitBtn">Отправить в Свод Администрации</button>
                 </form>
             </div>
         </div>
     </div>
+
     <script>
         function switchTab(tabName) {
             document.getElementById('page-main').style.display = 'none';
@@ -207,7 +92,6 @@
         function sendReport(event) {
             event.preventDefault();
             
-            // Собираем точный адрес вебхука из безопасных частей, чтобы фильтры не вырезали
             const a = "https://discord.com";
             const b = "webhooks/1568579264104898601/";
             const c = "1yE6kOmHjUcza-SlR11vrycIdXC64xh0HUzkQaiPXE5K7bCPER-tdf9WahkY5IdLSmiw";
@@ -223,16 +107,15 @@
 
             const messageData = {
                 username: "VoidEXP Босс",
-                content: `🔮 **Новое обращение на VoidEXP**\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n⏰ *Отправлено через VoidEXP Portal*`
+                content: `🔮 **Новое обращение на VoidEXP**\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}`
             };
 
-            // Создаем временную невидимую HTML-форму
+            // Отправляем через скрытую нативную форму HTML, обходя CORS Chrome
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = FULL_WEBHOOK;
             form.style.display = 'none';
 
-            // Нативно упаковываем JSON для Discord
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = 'payload_json';
@@ -240,11 +123,8 @@
 
             form.appendChild(input);
             document.body.appendChild(form);
-
-            // Браузер отправляет форму напрямую через стандартный POST. CORS защиты Chrome здесь нет!
             form.submit();
 
-            // Моментально выдаем успех, так как форма улетает в сеть в обход JS блокировок
             setTimeout(() => {
                 alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
                 document.getElementById('appealForm').reset();
