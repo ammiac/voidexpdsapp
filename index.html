@@ -57,7 +57,6 @@
                 <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается баном.</div></div>
             </div>
             <div id="page-forms" class="page">
-                <!-- Форма HTML отправки, обходящая CORS защиты браузеров -->
                 <form id="appealForm" method="POST" target="hidden_iframe" onsubmit="handleSubmit(event)">
                     <div class="form-group">
                         <label>Тип обращения</label>
@@ -75,7 +74,6 @@
                         <label>Суть обращения</label>
                         <textarea id="reason" placeholder="Опишите подробно..." required></textarea>
                     </div>
-                    <!-- Скрытое поле для JSON структуры Discord -->
                     <input type="hidden" name="payload_json" id="payload_json">
                     <button type="submit" class="btn-submit" id="submitBtn">Отправить в Свод Администрации</button>
                 </form>
@@ -86,7 +84,6 @@
     <script>
         let detectedIp = "Не удалось определить";
 
-        // Функция автоматического получения IP через JSONP шлюз (CORS защита её игнорирует!)
         function getIP(json) {
             detectedIp = json.ip;
         }
@@ -113,29 +110,27 @@
             btn.disabled = true;
             btn.innerText = "Отправка...";
 
-            // Твой проверенный новый рабочий вебхук anixel fix
+            // Наш новый чистый вебхук anixel fix
             const part1 = "https://discord.com";
             const part2 = "1568631375169585202/";
             const part3 = "KIkTyjhsOs0sV7X_edxx4nj6z55TJ_73r0jnMvrZpFdyr9xOM6tsWwqcef_SGMc_A71B";
             const NEW_WEBHOOK_URL = part1 + part2 + part3;
 
-            // Формируем сообщение с пингом роли <@&1553020321873797150> и определенным IP
+            // Структура сообщения.allowed_mentions открывает вебхуку права на пинг!
             const messageData = {
                 username: "VoidEXP Portal",
-                content: `🔔 <@&1553020321873797150> **Поступило новое обращение!**\n\n🔮 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${detectedIp}\`\n⏰ *Отправлено через VoidEXP Portal*`
+                content: `🔔 <@&1553020321873797150> **Поступило новое обращение!**\n\n🔮 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${detectedIp}\`\n⏰ *Отправлено через VoidEXP Portal*`,
+                allowed_mentions: {
+                    roles: ["1553020321873797150"]
+                }
             };
 
-            // Передаем URL вебхука в действие формы
             const form = document.getElementById('appealForm');
             form.action = NEW_WEBHOOK_URL;
 
-            // Зашиваем JSON данные в скрытый инпут
             document.getElementById('payload_json').value = JSON.stringify(messageData);
-
-            // Нативно отправляем HTML-форму
             form.submit();
 
-            // Очищаем форму и возвращаем интерфейс в исходное состояние
             setTimeout(() => {
                 alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
                 document.getElementById('appealForm').reset();
