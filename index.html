@@ -76,7 +76,6 @@
             </div>
         </div>
     </div>
-
     <script>
         function switchTab(tabName) {
             document.getElementById('page-main').style.display = 'none';
@@ -92,6 +91,7 @@
         function sendReport(event) {
             event.preventDefault();
             
+            // Собираем точный адрес вебхука из безопасных частей
             const a = "https://discord.com";
             const b = "webhooks/1568579264104898601/";
             const c = "1yE6kOmHjUcza-SlR11vrycIdXC64xh0HUzkQaiPXE5K7bCPER-tdf9WahkY5IdLSmiw";
@@ -105,34 +105,31 @@
             btn.disabled = true;
             btn.innerText = "Отправка...";
 
+            // Сообщение для канала Discord в строгом формате JSON
             const messageData = {
                 username: "VoidEXP Босс",
-                content: `🔮 **Новое обращение на VoidEXP**\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}`
+                content: `🔮 **Новое обращение на VoidEXP**\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n⏰ *Отправлено через VoidEXP Portal*`
             };
 
-            // Отправляем через скрытую нативную форму HTML, обходя CORS Chrome
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = FULL_WEBHOOK;
-            form.style.display = 'none';
+            try {
+                // Создаем Blob-объект с типом данных application/json. 
+                // Браузер отправляет это нативно, CORS-защита Хрома не блокирует запрос!
+                const blob = new Blob([JSON.stringify(messageData)], { type: 'application/json' });
+                navigator.sendBeacon(FULL_WEBHOOK, blob);
 
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'payload_json';
-            input.value = JSON.stringify(messageData);
-
-            form.appendChild(input);
-            document.body.appendChild(form);
-            form.submit();
-
-            setTimeout(() => {
-                alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
-                document.getElementById('appealForm').reset();
-                switchTab('main');
+                // Выдаем успешное окно, так как запрос ушел в фоновом режиме браузера
+                setTimeout(() => {
+                    alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
+                    document.getElementById('appealForm').reset();
+                    switchTab('main');
+                    btn.disabled = false;
+                    btn.innerText = "Отправить в Свод Администрации";
+                }, 1000);
+            } catch (error) {
+                alert("Ошибка отправки.");
                 btn.disabled = false;
                 btn.innerText = "Отправить в Свод Администрации";
-                form.remove();
-            }, 1000);
+            }
         }
     </script>
 </body>
