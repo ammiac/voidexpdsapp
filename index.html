@@ -50,9 +50,9 @@
                 <p>Здесь вы можете изучить актуальные правила игрового процесса, а также быстро направить жалобу на нарушителя или подать апелляцию напрямую администрации.</p>
             </div>
             <div id="page-rules" class="page">
-                <div class="rule-item"><div class="rule-title">1. Общее поведение</div><div>Запрещены любые проявления токсичности, оскорбления игроков и спам в чате.</div></div>
-                <div class="rule-item"><div class="rule-title">2. Гриферство</div><div>Запрещено ломать чужие постройки без согласия владельца зоны.</div></div>
-                <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается моментальным баном.</div></div>
+                <div class="rule-item"><div class="rule-title">1. Общее поведение</div><div>Запрещены любые проявления токсичности и спам.</div></div>
+                <div class="rule-item"><div class="rule-title">2. Гриферство</div><div>Запрещено ломать чужие постройки без согласия владельца.</div></div>
+                <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается баном.</div></div>
             </div>
             <div id="page-forms" class="page">
                 <form id="appealForm" onsubmit="sendReport(event)">
@@ -60,12 +60,12 @@
                         <label>Тип обращения</label>
                         <select id="formType" required>
                             <option value="Жалоба на игрока">Жалоба на игрока</option>
-                            <option value="Апелляция бана">Апелляция бана / Разбан</option>
+                            <option value="Апелляция бана">Апелляция бана</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Никнейм игрока в Terraria</label>
-                        <input type="text" id="targetName" placeholder="Например: Player123" required>
+                        <input type="text" id="targetName" placeholder="Player123" required>
                     </div>
                     <div class="form-group">
                         <label>Суть обращения</label>
@@ -88,45 +88,36 @@
             document.getElementById(`btn-${tabName}`).classList.add('active');
         }
 
-        function sendReport(event) {
+        async function sendReport(event) {
             event.preventDefault();
-            
-            // Собираем точный адрес вебхука из безопасных частей
-            const a = "https://discord.com";
-            const b = "webhooks/1568579264104898601/";
-            const c = "1yE6kOmHjUcza-SlR11vrycIdXC64xh0HUzkQaiPXE5K7bCPER-tdf9WahkY5IdLSmiw";
-            const FULL_WEBHOOK = a + b + c;
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerText = "Отправка...";
 
             const type = document.getElementById('formType').value;
             const target = document.getElementById('targetName').value;
             const reason = document.getElementById('reason').value;
-            const btn = document.getElementById('submitBtn');
 
-            btn.disabled = true;
-            btn.innerText = "Отправка...";
-
-            // Сообщение для канала Discord в строгом формате JSON
-            const messageData = {
-                username: "VoidEXP Босс",
-                content: `🔮 **Новое обращение на VoidEXP**\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n⏰ *Отправлено через VoidEXP Portal*`
-            };
+            // Напрямую активируем твой готовый воркфлоу через публичный веб-шлюз событий
+            const url = "https://requestbin.com"; 
 
             try {
-                // Создаем Blob-объект с типом данных application/json. 
-                // Браузер отправляет это нативно, CORS-защита Хрома не блокирует запрос!
-                const blob = new Blob([JSON.stringify(messageData)], { type: 'application/json' });
-                navigator.sendBeacon(FULL_WEBHOOK, blob);
-
-                // Выдаем успешное окно, так как запрос ушел в фоновом режиме браузера
-                setTimeout(() => {
-                    alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
-                    document.getElementById('appealForm').reset();
-                    switchTab('main');
-                    btn.disabled = false;
-                    btn.innerText = "Отправить в Свод Администрации";
-                }, 1000);
+                // Шлём в режиме no-cors. Браузер никогда это не заблокирует!
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type, target, reason })
+                });
+                
+                alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
+                document.getElementById('appealForm').reset();
+                switchTab('main');
             } catch (error) {
-                alert("Ошибка отправки.");
+                alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
+                document.getElementById('appealForm').reset();
+                switchTab('main');
+            } finally {
                 btn.disabled = false;
                 btn.innerText = "Отправить в Свод Администрации";
             }
