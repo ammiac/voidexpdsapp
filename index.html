@@ -55,7 +55,7 @@
                 <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается баном.</div></div>
             </div>
             <div id="page-forms" class="page">
-                <form id="appealForm" method="POST" target="hidden_iframe" onsubmit="handleSubmit(event)">
+                <form id="appealForm" onsubmit="handleSubmit(event)">
                     <div class="form-group">
                         <label>Тип обращения</label>
                         <select id="formType" required>
@@ -72,10 +72,8 @@
                         <label>Суть обращения</label>
                         <textarea id="reason" placeholder="Опишите подробно..." required></textarea>
                     </div>
-                    <input type="hidden" name="payload_json" id="payload_json">
                     <button type="submit" class="btn-submit" id="submitBtn">Отправить в Свод Администрации</button>
                 </form>
-                <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
             </div>
         </div>
     </div>
@@ -104,44 +102,56 @@
 
             let finalIp = "Скрыт/Не определен";
 
-            // Мгновенный фоновый запрос IP. Если браузер его заблокирует, код НЕ сломается!
+            // Безопасно определяем IP перед отправкой в Discord
             try {
-                const response = await fetch('https://ipify.org', { priority: 'high' });
+                const response = await fetch('https://ipify.org');
                 if (response.ok) {
                     const data = await response.json();
                     finalIp = data.ip;
                 }
             } catch (e) {
-                console.log("Определение IP пропущено из-за защиты сети");
+                console.log("Определение IP пропущено");
             }
 
-            // Твой рабочий вебхук anixel fix
+            // Твой рабочий вебхук anixel fix собранный по частям
             const part1 = "https://discord.com";
             const part2 = "1568631375169585202/";
             const part3 = "KIkTyjhsOs0sV7X_edxx4nj6z55TJ_73r0jnMvrZpFdyr9xOM6tsWwqcef_SGMc_A71B";
-            const NEW_WEBHOOK_URL = part1 + part2 + part3;
+            const FULL_WEBHOOK = part1 + part2 + part3;
 
-            // Формируем чистую структуру контента с пингом роли и IP
+            // Пропускаем запрос через стабильный CORS-прокси
+            const PROXY_URL = "https://corsproxy.io?" + encodeURIComponent(FULL_WEBHOOK);
+
+            // Сообщение для Discord. allowed_mentions ПРИНУДИТЕЛЬНО заставит работать пинг роли!
             const messageData = {
                 username: "VoidEXP Portal",
-                content: `🔔 <@&1553020321873797150> **Поступило новое обращение!**\n\n🔮 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${finalIp}\`\n⏰ *Отправлено через VoidEXP Portal*`
+                content: `🔔 <@&1553020321873797150> **Поступило новое обращение!**\n\n🔮 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${finalIp}\`\n⏰ *Отправлено через VoidEXP Portal*`,
+                allowed_mentions: {
+                    roles: ["1553020321873797150"]
+                }
             };
 
-            const form = document.getElementById('appealForm');
-            form.action = NEW_WEBHOOK_URL;
+            try {
+                // Шлем правильный JSON-запрос через прокси-шлюз
+                const response = await fetch(PROXY_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(messageData)
+                });
 
-            document.getElementById('payload_json').value = JSON.stringify(messageData);
-            
-            // Нативный сабмит формы. Пробивает любые защиты
-            form.submit();
-
-            setTimeout(() => {
-                alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
-                document.getElementById('appealForm').reset();
-                switchTab('main');
+                if (response.ok || response.status === 204) {
+                    alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
+                    document.getElementById('appealForm').reset();
+                    switchTab('main');
+                } else {
+                    alert("Произошла ошибка при доставке в Дискорд. Код: " + response.status);
+                }
+            } catch (error) {
+                alert("Ошибка сети. Проверьте интернет-соединение.");
+            } finally {
                 btn.disabled = false;
                 btn.innerText = "Отправить в Свод Администрации";
-            }, 1000);
+            }
         }
     </script>
 </body>
