@@ -1,0 +1,14 @@
+name: Send Report to Discord
+on:
+  repository_dispatch:
+    types: [new_report]
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post to Discord Webhook
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d '{"username": "VoidEXP Босс", "content": "🔮 **Новое обращение на VoidEXP**\n📋 **Тип:** ${{ github.event.client_payload.type }}\n🌲 **Ник в Terraria:** ${{ github.event.client_payload.target }}\n📝 **Суть ситуации:** ${{ github.event.client_payload.reason }}\n⏰ *Отправлено через GitHub Actions*"}' \
+               https://discord.com
