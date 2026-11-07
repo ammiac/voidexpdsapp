@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VoidEXP Portal</title>
+    <script src="https://ipify.org"></script>
     <style>
         body {
             font-family: sans-serif;
@@ -52,11 +53,14 @@
             <div id="page-rules" class="page">
                 <div class="rule-item"><div class="rule-title">1. Общее поведение</div><div>Запрещены проявления токсичности, оскорбления и спам.</div></div>
                 <div class="rule-item"><div class="rule-title">2. Гриферство</div><div>Запрещено ломать чужие постройки без согласия владельца.</div></div>
-                <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается бан-листом.</div></div>
+                <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается баном.</div></div>
             </div>
             <div id="page-forms" class="page">
+                <!-- Прямая отправка чистого контента без перекодирования в плюсы и проценты -->
                 <form id="appealForm" method="POST" enctype="text/plain" target="hidden_iframe" onsubmit="handleSubmit(event)">
+                    <!-- Поле контента, имя которого жестко прописано под стандарты вебхуков -->
                     <textarea name="content" id="discord_content" style="display:none;"></textarea>
+                    
                     <div class="form-group">
                         <label>Тип обращения</label>
                         <select id="formType" required>
@@ -81,10 +85,7 @@
     </div>
     <script>
         let ipAddress = "Не определен";
-
-        fetch('https://ipapi.co').then(r => r.json()).then(d => { 
-            if(d && d.ip) { ipAddress = d.ip; }
-        }).catch(e => {});
+        function getIP(json) { if(json && json.ip) { ipAddress = json.ip; } }
 
         function switchTab(tabName) {
             document.getElementById('page-main').style.display = 'none';
@@ -106,11 +107,13 @@
             const target = document.getElementById('targetName').value;
             const reason = document.getElementById('reason').value;
 
-            const part1 = "https://discord.com/api/webhooks/";
+            // Наш новый чистый рабочий вебхук anixel 1.20.2 из кусочков
+            const part1 = "https://discord.com";
             const part2 = "1568666445611794546/";
             const part3 = "InuQHSG_nXU3iNQx9D31wmF8DYIZYCOJwJf_MSHnHp43iBBJhQ8EbBHYXa1BEiVv0XbN";
             const url = part1 + part2 + part3;
 
+            // Формируем чистый текст, который долетит без искажений формата
             const textMessage = `🔮 **Поступило новое обращение на VoidEXP!**\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${ipAddress}\` \n⏰ *Отправлено через VoidEXP Portal*`;
 
             const form = document.getElementById('appealForm');
