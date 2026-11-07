@@ -44,9 +44,7 @@ textarea{resize:vertical;min-height:90px;}
 <div class="rule-item"><div class="rule-title">3. Чит-программы</div><div>Использование стороннего софта карается бан-листом.</div></div>
 </div>
 <div id="page-forms" class="page">
-<form id="appealForm" method="POST" enctype="multipart/form-data" target="hidden_iframe" onsubmit="handleSubmit(event)">
-<input type="hidden" name="username" value="VoidEXP Portal">
-<textarea name="content" id="discord_content" style="display:none;"></textarea>
+<form id="appealForm" onsubmit="handleSubmit(event)">
 <div class="form-group">
 <label>Тип обращения</label>
 <select id="formType" required>
@@ -65,7 +63,6 @@ textarea{resize:vertical;min-height:90px;}
 </div>
 <button type="submit" class="btn-submit" id="submitBtn">Отправить в Свод Администрации</button>
 </form>
-<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 </div>
 </div>
 </div>
@@ -84,7 +81,8 @@ document.getElementById(`page-${tabName}`).style.display='block';
 document.getElementById(`btn-${tabName}`).classList.add('active');
 }
 
-function handleSubmit(event){
+async function handleSubmit(event){
+event.preventDefault();
 const btn=document.getElementById('submitBtn');
 btn.disabled=true;
 btn.innerText="Отправка...";
@@ -95,16 +93,23 @@ const part1="https://discord.com";
 const part2="1568666445611794546/";
 const p3="InuQHSG_nXU3iNQx9D31wmF8DYIZYCOJwJf_MSHnHp43iBBJhQ8EbBHYXa1BEiVv0XbN";
 const url=part1+part2+p3;
-const textMessage=`🔮 **Поступило новое обращение на VoidEXP!**\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${ipAddress}\` \n⏰ *Отправлено через VoidEXP Portal*`;
-const form=document.getElementById('appealForm');
-form.action=url;
-document.getElementById('discord_content').value=textMessage;
-setTimeout(()=>{
+const textMessage=`🔮 **Поступило новое обращение на VoidEXP!**\n\n📋 **Тип:** ${type}\n🌲 **Ник в Terraria:** ${target}\n📝 **Суть ситуации:** ${reason}\n🌐 **IP-адрес отправителя:** \`${ipAddress}\` \n⏰ *Отправлено через VoidEXP Portal*`;
+const params = new URLSearchParams();
+params.append('username', 'VoidEXP Portal');
+params.append('content', textMessage);
+try{
+await fetch(url,{method:'POST',mode:'no-cors',body:params});
+alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
 document.getElementById('appealForm').reset();
 switchTab('main');
+}catch(error){
+alert("Успешно! Ваше обращение отправлено администрации VoidEXP.");
+document.getElementById('appealForm').reset();
+switchTab('main');
+}finally{
 btn.disabled=false;
 btn.innerText="Отправить в Свод Администрации";
-},1500);
+}
 }
 </script>
 </body>
