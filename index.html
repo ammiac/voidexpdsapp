@@ -149,7 +149,7 @@
                         <div id="username" style="font-weight: bold; font-size: 18px;">Игрок VoidEXP</div>
                     </div>
                 </div>
-                <p>Добро пожаловать в официальное mini-приложение сервера Terraria <b>VoidEXP</b>!</p>
+                <p>Добро пожаловать в официальное приложение сервера Terraria <b>VoidEXP</b>!</p>
                 <p>Здесь вы можете ознакомиться с актуальным сводом правил игрового процесса, а также быстро подать жалобу на нарушителя или отправить апелляцию администрации.</p>
             </div>
 
@@ -195,14 +195,19 @@
         </div>
     </div>
     <script>
-        // Инициализация Discord SDK с вашим ID
-        const discordSdk = new Discord.DiscordSDK("1568576590470717450");
-        let currentUser = { username: "Игрок VoidEXP", id: "Неизвестно" };
+        // Проверяем, запущено ли внутри Дискорда или в обычном браузере
+        const isDiscord = typeof Discord !== 'undefined' && Discord.DiscordSDK;
+        const discordSdk = isDiscord ? new Discord.DiscordSDK("1568576590470717450") : null;
+        let currentUser = { username: "Игрок VoidEXP", id: "Браузер" };
 
         async function setupDiscord() {
+            if (!discordSdk) {
+                console.log("Портал запущен в браузере. Авторизация Discord пропущена.");
+                return;
+            }
             try {
                 await discordSdk.ready();
-                const { code } = await discordSdk.commands.authorize({
+                await discordSdk.commands.authorize({
                     client_id: "1568576590470717450",
                     response_type: "code",
                     state: "1",
@@ -217,7 +222,9 @@
                         document.getElementById('avatar').src = `https://discordapp.com{currentUser.id}/${currentUser.avatar}.png`;
                     }
                 }
-            } catch (e) { console.log("Запущено вне Discord (режим разработки)"); }
+            } catch (e) { 
+                console.log("Ошибка инициализации SDK или запуск вне клиента Discord"); 
+            }
         }
         setupDiscord();
 
@@ -226,13 +233,14 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             
             document.getElementById(`page-${tabName}`).classList.add('active');
-            if(event && event.target) event.target.classList.add('active');
+            if(window.event && window.event.target) window.event.target.classList.add('active');
         }
 
         // Отправка формы через ваш рабочий Вебхук
         async function sendReport(event) {
             event.preventDefault();
             
+            // Твой личный рабочий вебхук сервера VoidEXP
             const WEBHOOK_URL = "https://discord.com"; 
 
             const type = document.getElementById('formType').value;
@@ -248,7 +256,7 @@
                     title: `🔮 Новое обращение: ${type}`,
                     color: 9064447, 
                     fields: [
-                        { name: "Отправитель в Discord", value: `${currentUser.username} (ID: ${currentUser.id})`, inline: true },
+                        { name: "Отправитель", value: `${currentUser.username} (ID: ${currentUser.id})`, inline: true },
                         { name: "Ник в Terraria", value: target, inline: true },
                         { name: "Описание ситуации", value: reason }
                     ],
@@ -269,7 +277,7 @@
                     document.getElementById('appealForm').reset();
                     switchTab('main');
                 } else {
-                    alert("Произошла ошибка при отправке вебхука.");
+                    alert("Ошибка при отправке вебхука. Проверьте канал в ДС.");
                 }
             } catch (error) {
                 alert("Не удалось связаться с сервером Discord.");
@@ -281,4 +289,3 @@
     </script>
 </body>
 </html>
-
